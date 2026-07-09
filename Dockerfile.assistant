@@ -1,0 +1,20 @@
+# 1. Korzystamy z oficjalnego, lekkiego obrazu Pythona
+FROM python:3.11-slim
+
+# 2. Instalujemy Gita i od razu czyścimy pliki tymczasowe, żeby kontener był lekki
+RUN apt-get update && apt-get install -y git && rm -rf /var/lib/apt/lists/*
+
+# 3. Zabezpieczenie: Mówimy Gitowi, żeby ufał plikom zamontowanym z Windowsa
+RUN git config --system --add safe.directory /app
+
+# 4. Ustawiamy folder roboczy wewnątrz kontenera
+WORKDIR /app
+
+# 5. Kopiujemy plik z listą bibliotek
+COPY requirements.txt .
+
+# 6. Instalujemy zależności Pythona
+RUN pip install --no-cache-dir -r requirements.txt
+
+# 7. Domyślnie kontener będzie odpalał Pythona
+ENTRYPOINT ["python"]
