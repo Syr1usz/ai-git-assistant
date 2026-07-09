@@ -1,7 +1,7 @@
 import subprocess
 import sys
 import os
-import google.genai as genai
+from google import genai
 from dotenv import load_dotenv
 
 # Wczytujemy zmienne z pliku .env
@@ -21,8 +21,8 @@ if not API_KEY:
     print(f"{RED}Błąd: Nie znaleziono klucza API w pliku .env!{RESET}")
     sys.exit()
 
-genai.configure(api_key=API_KEY)
-model = genai.GenerativeModel('gemini-flash-latest')
+# TWORZENIE KLIENTA (NOWA SKŁADNIA)
+client = genai.Client(api_key=API_KEY)
 
 def pobierz_zmiany():
     wynik = subprocess.run(['git', 'diff', '--cached'], capture_output=True, text=True)
@@ -52,7 +52,11 @@ UWAGI:
 [Twoje uwagi w punktach]
 """
 
-response = model.generate_content(polecenie)
+# WYWOŁANIE MODELU (NOWA SKŁADNIA)
+response = client.models.generate_content(
+    model='gemini-2.5-flash',
+    contents=polecenie
+)
 raport = response.text
 
 # 3. Kolorowy wydruk w konsoli
